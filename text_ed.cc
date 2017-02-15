@@ -1,12 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct text_t {
+struct text_t {
 	int key;
 	struct text_t *left;
 	struct text_t *right;
 	int height;
-} text_t;
+};
 
 text_t * create_text(){
 	text_t *tmp_node;
