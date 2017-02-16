@@ -22,6 +22,7 @@ text_t * create_text() {
 }
 
 void left_rotation(text_t *n) {
+	if (debug) printf("Inside left rot\n");
 	text_t *tmp_node;
 //	key_t tmp_key;
 	tmp_node = n->left;
@@ -38,6 +39,7 @@ void left_rotation(text_t *n) {
 }
 
 void right_rotation(text_t *n) {
+	if (debug) printf("Inside right rot\n");
 	text_t *tmp_node;
 //  key_t        tmp_key;
 	tmp_node = n->right;
@@ -232,11 +234,13 @@ void insert_line(text_t *txt, int index, char * new_line) {
 		tmp_node->height = 0;
 		tmp_node->right = NULL;
 	} else {
-		if (debug) printf("Inside insert 1\n");
+		if (debug)
+			printf("Inside insert 1\n");
 		text_t * path_stack[100];
 		int path_st_p = 0;
 		while (tmp_node->right != NULL) {
-			if (debug) printf("Inside insert 1.1\n");
+			if (debug)
+				printf("Inside insert 1.1\n");
 			if (index <= tmp_node->left->key) {
 				//Go left
 				tmp_node->key++;
@@ -330,7 +334,105 @@ void insert_line(text_t *txt, int index, char * new_line) {
 }
 
 char * delete_line(text_t *txt, int index) {
-	char *line = "Pending";
-	return line;
+	if (debug) printf("Inside delete\n");
+	text_t *tmp_node, *upper_node, *other_node;
+	char *deleted_object;
+	int finished;
+	if (txt == NULL) {
+		if (debug) printf("Inside delete 0\n");
+		return NULL;
+	} else if (txt->left == NULL) {
+		if (debug) printf("Inside delete 1\n");
+		return NULL;
+	} else if (txt->key < index) {
+		if (debug) printf("Inside delete 2\n");
+		return NULL;
+	} else if (txt->right == NULL) {
+		if (debug) printf("Inside delete 3\n");
+		return (char *) txt->left;
+	} else {
+		if (debug) printf("Inside delete 4\n");
+		text_t * path_stack[100];
+		int path_st_p = 0;
+		tmp_node = txt;
+		while (tmp_node->right != NULL) {
+			if (debug) printf("Inside delete 4.1\n");
+			tmp_node->key--;
+			path_stack[path_st_p++] = tmp_node;
+			upper_node = tmp_node;
+			if (index <= upper_node->left->key) {
+				if (debug) printf("Inside delete 4.1.1\n");
+				tmp_node = upper_node->left;
+				other_node = upper_node->right;
+			} else {
+				if (debug) printf("Inside delete 4.1.2\n");
+				index = index - upper_node->left->key;
+				tmp_node = upper_node->right;
+				other_node = upper_node->left;
+			}
+		}
+		if (debug) printf("Inside delete 4.2\n");
+		upper_node->key = other_node->key;
+		upper_node->left = other_node->left;
+		upper_node->right = other_node->right;
+		upper_node->height = other_node->height;
+		deleted_object = (char *) tmp_node->left;
+		/*rebalance*/
+		if (debug) printf("Inside delete 4.3\n");
+		finished = 0;
+		path_st_p -= 1;
+		while (path_st_p > 0 && !finished) {
+			if (debug) printf("Inside delete 4.4\n");
+			int tmp_height, old_height;
+			tmp_node = path_stack[--path_st_p];
+			old_height = tmp_node->height;
+			if (tmp_node->left->height - tmp_node->right->height == 2) {
+				if (debug) printf("Inside delete 4.5\n");
+				if (tmp_node->left->left->height - tmp_node->right->height
+						== 1) {
+					if (debug) printf("Inside delete 4.5.1\n");
+					right_rotation(tmp_node);
+					tmp_node->right->height = tmp_node->right->left->height + 1;
+					tmp_node->height = tmp_node->right->height + 1;
+				} else {
+					if (debug) printf("Inside delete 4.5.2\n");
+					left_rotation(tmp_node->left);
+					right_rotation(tmp_node);
+					tmp_height = tmp_node->left->left->height;
+					tmp_node->left->height = tmp_height + 1;
+					tmp_node->right->height = tmp_height + 1;
+					tmp_node->height = tmp_height + 2;
+				}
+			} else if (tmp_node->left->height - tmp_node->right->height == -2) {
+				if (debug) printf("Inside delete 4.6\n");
+				if (tmp_node->right->right->height - tmp_node->left->height
+						== 1) {
+					if (debug) printf("Inside delete 4.6.1\n");
+					left_rotation(tmp_node);
+					tmp_node->left->height = tmp_node->left->right->height + 1;
+					tmp_node->height = tmp_node->left->height + 1;
+				} else {
+					if (debug) printf("Inside delete 4.6.2\n");
+					right_rotation(tmp_node->right);
+					left_rotation(tmp_node);
+					tmp_height = tmp_node->right->right->height;
+					tmp_node->left->height = tmp_height + 1;
+					tmp_node->right->height = tmp_height + 1;
+					tmp_node->height = tmp_height + 2;
+				}
+			} else /* update height even if there was no rotation */
+			{
+				if (debug) printf("Inside delete 4.7\n");
+				if (tmp_node->left->height > tmp_node->right->height)
+					tmp_node->height = tmp_node->left->height + 1;
+				else
+					tmp_node->height = tmp_node->right->height + 1;
+			}
+			if (tmp_node->height == old_height)
+				finished = 1;
+		}
+		if (debug) printf("Inside delete 99999999999\n");
+		return deleted_object;
+	}
 }
 
