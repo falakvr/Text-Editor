@@ -66,28 +66,58 @@ int length_text(text_t *txt) {
 
 char * get_line(text_t *txt, int index) {
 	text_t *tmp_node = txt;
-		if (tmp_node == NULL) {
-			//root is null
-			return NULL;
-		} else if (tmp_node->key < index) {
-			//index is greater than number of lines; line does not exist
-			return NULL;
-		} else {
-			//line exists
-			while (tmp_node->right != NULL) {
-				if (index <= tmp_node->left->key) {
-					//Go left
-					tmp_node = tmp_node->left;
+	if (tmp_node == NULL) {
+		//root is null
+		return NULL;
+	} else if (tmp_node->key < index) {
+		//index is greater than number of lines; line does not exist
+		return NULL;
+	} else {
+		//line exists
+		while (tmp_node->right != NULL) {
+			if (index <= tmp_node->left->key) {
+				//Go left
+				tmp_node = tmp_node->left;
 
-				} else {
-					//Update index and Go right
-					index = index - tmp_node->left->key;
-					tmp_node = tmp_node->right;
-				}
+			} else {
+				//Update index and Go right
+				index = index - tmp_node->left->key;
+				tmp_node = tmp_node->right;
 			}
-			//Node found; return line
-			return (char *) tmp_node->left;
 		}
+		//Node found; return line
+		return (char *) tmp_node->left;
+	}
+}
+
+char * set_line(text_t *txt, int index, char * new_line) {
+	text_t *tmp_node = txt;
+	if (tmp_node == NULL) {
+		//root is null
+		return NULL;
+	} else if (tmp_node->key < index) {
+		//index is greater than number of lines; line does not exist
+		return NULL;
+	} else {
+		//line exists
+		while (tmp_node->right != NULL) {
+			if (index <= tmp_node->left->key) {
+				//Go left
+				tmp_node = tmp_node->left;
+
+			} else {
+				//Update index and Go right
+				index = index - tmp_node->left->key;
+				tmp_node = tmp_node->right;
+			}
+		}
+		//Node found; replace and return
+		char *old_line;
+		old_line = (char *) tmp_node->left;
+		tmp_node->left = (text_t *) new_line;
+
+		return old_line;
+	}
 }
 
 void append_line(text_t *txt, char * new_line) {
@@ -189,11 +219,6 @@ void append_line(text_t *txt, char * new_line) {
 				finished = 1;
 		}
 	}
-}
-
-char * set_line(text_t *txt, int index, char * new_line) {
-	char *line = "Pending";
-	return line;
 }
 
 void insert_line(text_t *txt, int index, char * new_line) {
