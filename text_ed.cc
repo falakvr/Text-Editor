@@ -65,8 +65,29 @@ int length_text(text_t *txt) {
 }
 
 char * get_line(text_t *txt, int index) {
-	char * line = "Pending";
-	return line;
+	text_t *tmp_node = txt;
+		if (tmp_node == NULL) {
+			//root is null
+			return NULL;
+		} else if (tmp_node->key < index) {
+			//index is greater than number of lines; line does not exist
+			return NULL;
+		} else {
+			//line exists
+			while (tmp_node->right != NULL) {
+				if (index <= tmp_node->left->key) {
+					//Go left
+					tmp_node = tmp_node->left;
+
+				} else {
+					//Update index and Go right
+					index = index - tmp_node->left->key;
+					tmp_node = tmp_node->right;
+				}
+			}
+			//Node found; return line
+			return (char *) tmp_node->left;
+		}
 }
 
 void append_line(text_t *txt, char * new_line) {
@@ -110,20 +131,24 @@ void append_line(text_t *txt, char * new_line) {
 		tmp_node->key++;
 		tmp_node->height = 1;
 		while (path_st_p > 0 && !finished) {
-			if (debug) printf("Inside append 3\n");
+			if (debug)
+				printf("Inside append 3\n");
 			int tmp_height, old_height;
 			tmp_node = path_stack[--path_st_p];
 			old_height = tmp_node->height;
 			if (tmp_node->left->height - tmp_node->right->height == 2) {
-				if (debug) printf("Inside append 3.1\n");
+				if (debug)
+					printf("Inside append 3.1\n");
 				if (tmp_node->left->left->height - tmp_node->right->height
 						== 1) {
-					if (debug) printf("Inside append 3.1.1\n");
+					if (debug)
+						printf("Inside append 3.1.1\n");
 					right_rotation(tmp_node);
 					tmp_node->right->height = tmp_node->right->left->height + 1;
 					tmp_node->height = tmp_node->right->height + 1;
 				} else {
-					if (debug) printf("Inside append 3.1.2\n");
+					if (debug)
+						printf("Inside append 3.1.2\n");
 					left_rotation(tmp_node->left);
 					right_rotation(tmp_node);
 					tmp_height = tmp_node->left->left->height;
@@ -132,15 +157,18 @@ void append_line(text_t *txt, char * new_line) {
 					tmp_node->height = tmp_height + 2;
 				}
 			} else if (tmp_node->left->height - tmp_node->right->height == -2) {
-				if (debug) printf("Inside append 3.2\n");
+				if (debug)
+					printf("Inside append 3.2\n");
 				if (tmp_node->right->right->height - tmp_node->left->height
 						== 1) {
-					if (debug) printf("Inside append 3.2.1\n");
+					if (debug)
+						printf("Inside append 3.2.1\n");
 					left_rotation(tmp_node);
 					tmp_node->left->height = tmp_node->left->right->height + 1;
 					tmp_node->height = tmp_node->left->height + 1;
 				} else {
-					if (debug) printf("Inside append 3.2.2\n");
+					if (debug)
+						printf("Inside append 3.2.2\n");
 					right_rotation(tmp_node->right);
 					left_rotation(tmp_node);
 					tmp_height = tmp_node->right->right->height;
@@ -150,7 +178,8 @@ void append_line(text_t *txt, char * new_line) {
 				}
 			} else /* update height even if there was no rotation */
 			{
-				if (debug) printf("Inside append 3.3\n");
+				if (debug)
+					printf("Inside append 3.3\n");
 				if (tmp_node->left->height > tmp_node->right->height)
 					tmp_node->height = tmp_node->left->height + 1;
 				else
@@ -163,7 +192,8 @@ void append_line(text_t *txt, char * new_line) {
 }
 
 char * set_line(text_t *txt, int index, char * new_line) {
-	return new_line;
+	char *line = "Pending";
+	return line;
 }
 
 void insert_line(text_t *txt, int index, char * new_line) {
@@ -173,4 +203,21 @@ void insert_line(text_t *txt, int index, char * new_line) {
 char * delete_line(text_t *txt, int index) {
 	char *line = "Pending";
 	return line;
+}
+
+int main(int argc, char **argv) {
+	int i, tmp;
+	text_t *txt2;
+	char *c;
+	txt2 = create_text();
+	for (i = 1; i <= 10; i++) {
+		if (i % 2 == 1)
+			append_line(txt2, "A");
+		else
+			append_line(txt2, "B");
+	}
+	for (i = 1; i <= 10; i++) {
+		c = get_line(txt2, i);
+		printf("%s\n", c);
+	}
 }
