@@ -24,34 +24,21 @@ text_t * create_text() {
 void left_rotation(text_t *n) {
 	if (debug) printf("Inside left rot\n");
 	text_t *tmp_node;
-//	key_t tmp_key;
 	tmp_node = n->left;
-//	tmp_key = n->key;
 	n->left = n->right;
-//	n->key   = n->right->key;
 	n->right = n->left->right;
 	n->left->right = n->left->left;
 	n->left->left = tmp_node;
-	//n->left->key = tmp_key;
-
 	n->left->key = n->left->left->key + n->left->right->key;
-	//n->right->key = n->right->left->key + n->right->right->key;
 }
 
 void right_rotation(text_t *n) {
-	if (debug) printf("Inside right rot\n");
 	text_t *tmp_node;
-//  key_t        tmp_key;
 	tmp_node = n->right;
-//  tmp_key  = n->key;
 	n->right = n->left;
-	//n->key = n->left->key;
 	n->left = n->right->left;
 	n->right->left = n->right->right;
 	n->right->right = tmp_node;
-//  n->right->key   = tmp_key;
-
-//n->left->key = n->left->left->key + n->left->right->key;
 	n->right->key = n->right->left->key + n->right->right->key;
 }
 
@@ -126,27 +113,19 @@ void append_line(text_t *txt, char * new_line) {
 	text_t *tmp_node;
 	int finished = 0;
 	if (txt->left == NULL) {
-		if (debug)
-			printf("Inside append 0\n");
 		txt->left = (text_t *) new_line;
 		txt->key = 1;
 		txt->height = 0;
 		txt->right = NULL;
 	} else {
-		if (debug)
-			printf("Inside append 1\n");
 		text_t * path_stack[100];
 		int path_st_p = 0;
 		tmp_node = txt;
 		while (tmp_node->right != NULL) {
-			if (debug)
-				printf("Inside append 1.1\n");
 			tmp_node->key++;
 			path_stack[path_st_p++] = tmp_node;
 			tmp_node = tmp_node->right;
 		}
-		if (debug)
-			printf("Inside append 2\n");
 		text_t *old_leaf, *new_leaf;
 		old_leaf = create_text();
 		old_leaf->left = tmp_node->left;
@@ -163,14 +142,10 @@ void append_line(text_t *txt, char * new_line) {
 		tmp_node->key++;
 		tmp_node->height = 1;
 		while (path_st_p > 0 && !finished) {
-			if (debug)
-				printf("Inside append 3\n");
 			int tmp_height, old_height;
 			tmp_node = path_stack[--path_st_p];
 			old_height = tmp_node->height;
 			if (tmp_node->left->height - tmp_node->right->height == 2) {
-				if (debug)
-					printf("Inside append 3.1\n");
 				if (tmp_node->left->left->height - tmp_node->right->height
 						== 1) {
 					if (debug)
@@ -179,8 +154,6 @@ void append_line(text_t *txt, char * new_line) {
 					tmp_node->right->height = tmp_node->right->left->height + 1;
 					tmp_node->height = tmp_node->right->height + 1;
 				} else {
-					if (debug)
-						printf("Inside append 3.1.2\n");
 					left_rotation(tmp_node->left);
 					right_rotation(tmp_node);
 					tmp_height = tmp_node->left->left->height;
@@ -189,18 +162,12 @@ void append_line(text_t *txt, char * new_line) {
 					tmp_node->height = tmp_height + 2;
 				}
 			} else if (tmp_node->left->height - tmp_node->right->height == -2) {
-				if (debug)
-					printf("Inside append 3.2\n");
 				if (tmp_node->right->right->height - tmp_node->left->height
 						== 1) {
-					if (debug)
-						printf("Inside append 3.2.1\n");
 					left_rotation(tmp_node);
 					tmp_node->left->height = tmp_node->left->right->height + 1;
 					tmp_node->height = tmp_node->left->height + 1;
 				} else {
-					if (debug)
-						printf("Inside append 3.2.2\n");
 					right_rotation(tmp_node->right);
 					left_rotation(tmp_node);
 					tmp_height = tmp_node->right->right->height;
@@ -208,10 +175,8 @@ void append_line(text_t *txt, char * new_line) {
 					tmp_node->right->height = tmp_height + 1;
 					tmp_node->height = tmp_height + 2;
 				}
-			} else /* update height even if there was no rotation */
-			{
-				if (debug)
-					printf("Inside append 3.3\n");
+			} else {
+				/* update height even if there was no rotation */
 				if (tmp_node->left->height > tmp_node->right->height)
 					tmp_node->height = tmp_node->left->height + 1;
 				else
@@ -227,20 +192,14 @@ void insert_line(text_t *txt, int index, char * new_line) {
 	text_t *tmp_node = txt;
 	int finished = 0;
 	if (tmp_node->left == NULL) {
-		if (debug)
-			printf("Inside insert 0\n");
 		tmp_node->left = (text_t *) new_line;
 		tmp_node->key = 1;
 		tmp_node->height = 0;
 		tmp_node->right = NULL;
 	} else {
-		if (debug)
-			printf("Inside insert 1\n");
 		text_t * path_stack[100];
 		int path_st_p = 0;
 		while (tmp_node->right != NULL) {
-			if (debug)
-				printf("Inside insert 1.1\n");
 			if (index <= tmp_node->left->key) {
 				//Go left
 				tmp_node->key++;
@@ -255,8 +214,7 @@ void insert_line(text_t *txt, int index, char * new_line) {
 				tmp_node = tmp_node->right;
 			}
 		}
-		if (debug)
-			printf("Inside insert 2\n");
+
 		text_t *old_leaf, *new_leaf;
 		old_leaf = create_text();
 		old_leaf->left = tmp_node->left;
@@ -273,24 +231,16 @@ void insert_line(text_t *txt, int index, char * new_line) {
 		tmp_node->key++;
 		tmp_node->height = 1;
 		while (path_st_p > 0 && !finished) {
-			if (debug)
-				printf("Inside insert 3\n");
 			int tmp_height, old_height;
 			tmp_node = path_stack[--path_st_p];
 			old_height = tmp_node->height;
 			if (tmp_node->left->height - tmp_node->right->height == 2) {
-				if (debug)
-					printf("Inside insert 3.1\n");
 				if (tmp_node->left->left->height - tmp_node->right->height
 						== 1) {
-					if (debug)
-						printf("Inside insert 3.1.1\n");
 					right_rotation(tmp_node);
 					tmp_node->right->height = tmp_node->right->left->height + 1;
 					tmp_node->height = tmp_node->right->height + 1;
 				} else {
-					if (debug)
-						printf("Inside insert 3.1.2\n");
 					left_rotation(tmp_node->left);
 					right_rotation(tmp_node);
 					tmp_height = tmp_node->left->left->height;
@@ -299,18 +249,12 @@ void insert_line(text_t *txt, int index, char * new_line) {
 					tmp_node->height = tmp_height + 2;
 				}
 			} else if (tmp_node->left->height - tmp_node->right->height == -2) {
-				if (debug)
-					printf("Inside insert 3.2\n");
 				if (tmp_node->right->right->height - tmp_node->left->height
 						== 1) {
-					if (debug)
-						printf("Inside insert 3.2.1\n");
 					left_rotation(tmp_node);
 					tmp_node->left->height = tmp_node->left->right->height + 1;
 					tmp_node->height = tmp_node->left->height + 1;
 				} else {
-					if (debug)
-						printf("Inside insert 3.2.2\n");
 					right_rotation(tmp_node->right);
 					left_rotation(tmp_node);
 					tmp_height = tmp_node->right->right->height;
@@ -318,10 +262,8 @@ void insert_line(text_t *txt, int index, char * new_line) {
 					tmp_node->right->height = tmp_height + 1;
 					tmp_node->height = tmp_height + 2;
 				}
-			} else /* update height even if there was no rotation */
-			{
-				if (debug)
-					printf("Inside insert 3.3\n");
+			} else {
+				/* update height even if there was no rotation */
 				if (tmp_node->left->height > tmp_node->right->height)
 					tmp_node->height = tmp_node->left->height + 1;
 				else
@@ -339,63 +281,49 @@ char * delete_line(text_t *txt, int index) {
 	char *deleted_object;
 	int finished;
 	if (txt == NULL) {
-		if (debug) printf("Inside delete 0\n");
 		return NULL;
 	} else if (txt->left == NULL) {
-		if (debug) printf("Inside delete 1\n");
 		return NULL;
 	} else if (txt->key < index) {
-		if (debug) printf("Inside delete 2\n");
 		return NULL;
 	} else if (txt->right == NULL) {
-		if (debug) printf("Inside delete 3\n");
 		return (char *) txt->left;
 	} else {
-		if (debug) printf("Inside delete 4\n");
 		text_t * path_stack[100];
 		int path_st_p = 0;
 		tmp_node = txt;
 		while (tmp_node->right != NULL) {
-			if (debug) printf("Inside delete 4.1\n");
 			tmp_node->key--;
 			path_stack[path_st_p++] = tmp_node;
 			upper_node = tmp_node;
 			if (index <= upper_node->left->key) {
-				if (debug) printf("Inside delete 4.1.1\n");
 				tmp_node = upper_node->left;
 				other_node = upper_node->right;
 			} else {
-				if (debug) printf("Inside delete 4.1.2\n");
 				index = index - upper_node->left->key;
 				tmp_node = upper_node->right;
 				other_node = upper_node->left;
 			}
 		}
-		if (debug) printf("Inside delete 4.2\n");
 		upper_node->key = other_node->key;
 		upper_node->left = other_node->left;
 		upper_node->right = other_node->right;
 		upper_node->height = other_node->height;
 		deleted_object = (char *) tmp_node->left;
 		/*rebalance*/
-		if (debug) printf("Inside delete 4.3\n");
 		finished = 0;
 		path_st_p -= 1;
 		while (path_st_p > 0 && !finished) {
-			if (debug) printf("Inside delete 4.4\n");
 			int tmp_height, old_height;
 			tmp_node = path_stack[--path_st_p];
 			old_height = tmp_node->height;
 			if (tmp_node->left->height - tmp_node->right->height == 2) {
-				if (debug) printf("Inside delete 4.5\n");
 				if (tmp_node->left->left->height - tmp_node->right->height
 						== 1) {
-					if (debug) printf("Inside delete 4.5.1\n");
 					right_rotation(tmp_node);
 					tmp_node->right->height = tmp_node->right->left->height + 1;
 					tmp_node->height = tmp_node->right->height + 1;
 				} else {
-					if (debug) printf("Inside delete 4.5.2\n");
 					left_rotation(tmp_node->left);
 					right_rotation(tmp_node);
 					tmp_height = tmp_node->left->left->height;
@@ -404,15 +332,12 @@ char * delete_line(text_t *txt, int index) {
 					tmp_node->height = tmp_height + 2;
 				}
 			} else if (tmp_node->left->height - tmp_node->right->height == -2) {
-				if (debug) printf("Inside delete 4.6\n");
 				if (tmp_node->right->right->height - tmp_node->left->height
 						== 1) {
-					if (debug) printf("Inside delete 4.6.1\n");
 					left_rotation(tmp_node);
 					tmp_node->left->height = tmp_node->left->right->height + 1;
 					tmp_node->height = tmp_node->left->height + 1;
 				} else {
-					if (debug) printf("Inside delete 4.6.2\n");
 					right_rotation(tmp_node->right);
 					left_rotation(tmp_node);
 					tmp_height = tmp_node->right->right->height;
@@ -420,9 +345,8 @@ char * delete_line(text_t *txt, int index) {
 					tmp_node->right->height = tmp_height + 1;
 					tmp_node->height = tmp_height + 2;
 				}
-			} else /* update height even if there was no rotation */
-			{
-				if (debug) printf("Inside delete 4.7\n");
+			} else {
+				/* update height even if there was no rotation */
 				if (tmp_node->left->height > tmp_node->right->height)
 					tmp_node->height = tmp_node->left->height + 1;
 				else
@@ -431,8 +355,6 @@ char * delete_line(text_t *txt, int index) {
 			if (tmp_node->height == old_height)
 				finished = 1;
 		}
-		if (debug) printf("Inside delete 99999999999\n");
 		return deleted_object;
 	}
 }
-
