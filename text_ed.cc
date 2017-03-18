@@ -22,7 +22,6 @@ text_t * create_text() {
 }
 
 void left_rotation(text_t *n) {
-	if (debug) printf("Inside left rot\n");
 	text_t *tmp_node;
 	tmp_node = n->left;
 	n->left = n->right;
