@@ -20,9 +20,12 @@ line exists, it appends new line as new last line.
 - char * delete_line( text_t *txt, int index) deletes the line of number index, renumbering all
 lines after that line, and returns a pointer to the deleted line.
 
-The text editor is built on top of the basic binary search tree implementation available at http://www-cs.ccny.cuny.edu/~peter/dstest/h_bl_tree.c
+The text editor is built on top of the basic binary search tree implementation available at -
+
+http://www-cs.ccny.cuny.edu/~peter/dstest/h_bl_tree.c
 
 References - 
 
 http://www-cs.ccny.cuny.edu/~peter/dstest/h_bl_tree.c
+
 Peter Brass: Advanced Data Structures, Cambridge University Press 2008.
